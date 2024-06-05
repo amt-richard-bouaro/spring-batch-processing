@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  social-media:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: social-media
+    ports:
+      - '8600:8600'
+    restart: on-failure
+    networks:
+      - social-media-batch-processing-network
+
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    environment:
+      - 'POSTGRES_DB=social-media_db'
+      - 'POSTGRES_PASSWORD=admin'
+      - 'POSTGRES_USER=admin'
+    ports:
+      - '5434:5432'
+    networks:
+      - social-media-batch-processing-network
+
+
+networks:
+  social-media-batch-processing-network:
+    driver: bridge
