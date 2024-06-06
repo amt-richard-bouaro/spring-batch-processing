@@ -1,40 +1,35 @@
 package com.amalitech.springbatchprocessing.controller;
 
+import com.amalitech.springbatchprocessing.dto.SuccessResponseDto;
+import com.amalitech.springbatchprocessing.enums.ResponseStatus;
+import com.amalitech.springbatchprocessing.service.BatchService;
 import lombok.AllArgsConstructor;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.lang.model.type.NullType;
+import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/")
 @AllArgsConstructor
 public class UserController {
     
-    
-    private final JobLauncher jobLauncher;
-    
-    private final Job job;
-    
+    private final BatchService batchService;
     
     @GetMapping("v1/users/import")
-    public void importJsonBulkDatasetToDatabaseJob() {
+    public ResponseEntity<SuccessResponseDto<NullType>> handleImportJsonBulkDatasetToDatabaseJob() {
         
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("startAt", System.currentTimeMillis())
-                .toJobParameters();
+      batchService.importJsonBulkDatasetToDatabaseJob();
         
-        try {
-            jobLauncher.run(job, jobParameters);
-        } catch (JobExecutionAlreadyRunningException | JobParametersInvalidException |
-                 JobInstanceAlreadyCompleteException | JobRestartException e) {
-            e.printStackTrace();
-//            throw new RuntimeException(e);
-        }
+        SuccessResponseDto<NullType>  response = new SuccessResponseDto<>(ResponseStatus.SUCCESS, "Successfully imported json bulk dataset to database",
+                Instant.now().toString(), null
+                );
+      
+      return new ResponseEntity<> (response, HttpStatus.CREATED);
     }
 
 }
