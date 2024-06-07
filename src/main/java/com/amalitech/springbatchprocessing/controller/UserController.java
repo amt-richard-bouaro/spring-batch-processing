@@ -88,7 +88,7 @@ public class UserController {
             summary = "This endpoint provides paginated list of users",
             responses = {
                     @ApiResponse(description = "Success",
-                            responseCode = "201"),
+                            responseCode = "200"),
                     @ApiResponse(
                             description = "Internal Server Error",
                             responseCode = "500"
@@ -108,6 +108,7 @@ public class UserController {
                                                                                .pageSize(users.getSize())
                                                                                .totalElements(users.getTotalElements())
                                                                                .totalPages(users.getTotalPages())
+                .users(users)
                                                                                .build();
         
         SuccessResponseDto<PaginatedUsersResponseDto> response = new SuccessResponseDto<>(ResponseStatus.SUCCESS,
