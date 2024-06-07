@@ -70,7 +70,7 @@ public class BatchConfig {
     }
     
     @Bean
-    public Job runJob(){
+    public Job job(){
         return new JobBuilder("jsonImportJob", jobRepository)
                .start(importStep())
                .build();

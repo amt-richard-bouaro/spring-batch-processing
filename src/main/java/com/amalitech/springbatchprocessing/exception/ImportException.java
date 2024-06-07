@@ -6,4 +6,8 @@ public class ImportException extends RuntimeException{
         super(message);
         
     }
+    
+    public ImportException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
