@@ -2,6 +2,7 @@ package com.amalitech.springbatchprocessing.controller;
 
 import com.amalitech.springbatchprocessing.dto.PaginatedUsersResponseDto;
 import com.amalitech.springbatchprocessing.dto.SuccessResponseDto;
+import com.amalitech.springbatchprocessing.entity.Mappers.UserEntityMapper;
 import com.amalitech.springbatchprocessing.entity.UserEntity;
 import com.amalitech.springbatchprocessing.enums.ResponseStatus;
 import com.amalitech.springbatchprocessing.service.BatchService;
@@ -28,22 +29,10 @@ public class UserController {
     
     private final BatchService batchService;
     
+    private final UserEntityMapper userEntityMapper;
     
     @PostMapping("v1/users/import")
-    @Operation(
-            description = "Upload user data.",
-            summary = "This endpoint allows uploading bulk data to database. This will be processed without spring batch.",
-            responses = {
-                    @ApiResponse(description = "Success",
-                    responseCode = "201"), @
-                    ApiResponse(
-                            description = "Bad Request",
-                            responseCode = "400"),
-                    @ApiResponse(
-                            description = "Internal Server Error",
-                            responseCode = "500"
-                    )
-            })
+    @Operation(description = "Upload user data.", summary = "This endpoint allows uploading bulk data to database. This will be processed without spring batch.", responses = {@ApiResponse(description = "Success", responseCode = "201"), @ApiResponse(description = "Bad Request", responseCode = "400"), @ApiResponse(description = "Internal Server Error", responseCode = "500")})
     public ResponseEntity<SuccessResponseDto<BatchStatus>> handleImportJsonBulkDatasetToDatabaseJobWithoutBatchProcessor(@RequestParam(name = "file") MultipartFile file) {
         
         BatchStatus batchResponse = batchService.importJsonBulkDatasetToDatabaseJobWithoutBatch(file);
@@ -55,20 +44,7 @@ public class UserController {
     }
     
     @PostMapping("v2/users/import")
-    @Operation(
-            description = "Upload user data.",
-            summary = "This endpoint allows uploading bulk data to database. This will be proccessed using spring batch.",
-            responses = {
-                    @ApiResponse(description = "Success",
-                            responseCode = "201"), @
-                    ApiResponse(
-                    description = "Bad Request",
-                    responseCode = "400"),
-                    @ApiResponse(
-                            description = "Internal Server Error",
-                            responseCode = "500"
-                    )
-            })
+    @Operation(description = "Upload user data.", summary = "This endpoint allows uploading bulk data to database. This will be proccessed using spring batch.", responses = {@ApiResponse(description = "Success", responseCode = "201"), @ApiResponse(description = "Bad Request", responseCode = "400"), @ApiResponse(description = "Internal Server Error", responseCode = "500")})
     public ResponseEntity<SuccessResponseDto<BatchStatus>> handleImportJsonBulkDatasetToDatabaseJob(
             @RequestParam(name = "file") MultipartFile file
     ) {
@@ -83,17 +59,7 @@ public class UserController {
     }
     
     @GetMapping(value = "v1/users")
-    @Operation(
-            description = "Get saved users ",
-            summary = "This endpoint provides paginated list of users",
-            responses = {
-                    @ApiResponse(description = "Success",
-                            responseCode = "200"),
-                    @ApiResponse(
-                            description = "Internal Server Error",
-                            responseCode = "500"
-                    )
-            })
+    @Operation(description = "Get saved users ", summary = "This endpoint provides paginated list of users", responses = {@ApiResponse(description = "Success", responseCode = "200"), @ApiResponse(description = "Internal Server Error", responseCode = "500")})
     public ResponseEntity<SuccessResponseDto<PaginatedUsersResponseDto>> handleGettingAllUsers(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "100") int pageSize
@@ -108,7 +74,9 @@ public class UserController {
                                                                                .pageSize(users.getSize())
                                                                                .totalElements(users.getTotalElements())
                                                                                .totalPages(users.getTotalPages())
-                .users(users)
+                                                                               .users(users.stream()
+                                                                                           .map(userEntityMapper::toDto)
+                                                                                           .toList())
                                                                                .build();
         
         SuccessResponseDto<PaginatedUsersResponseDto> response = new SuccessResponseDto<>(ResponseStatus.SUCCESS,
