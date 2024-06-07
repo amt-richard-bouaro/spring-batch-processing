@@ -31,3 +31,6 @@ api:
 
 server:
   port: 8600
+springdoc:
+  swagger-ui:
+    path: /
