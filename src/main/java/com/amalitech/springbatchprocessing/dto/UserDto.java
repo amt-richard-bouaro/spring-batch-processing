@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class UserDto {
-    private Long user_id;
+    private Long id;
     
     @NotNull
     @Size(min = 1, max = 20)

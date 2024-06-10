@@ -4,6 +4,8 @@ import com.amalitech.springbatchprocessing.entity.UserEntity;
 import com.amalitech.springbatchprocessing.repository.UserEntityRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -74,6 +76,12 @@ public class BatchConfig {
         return new JobBuilder("jsonImportJob", jobRepository)
                .start(importStep())
                .build();
+    }
+    
+    
+    @Bean
+    TimedAspect timedAspect(MeterRegistry registry) {
+        return new TimedAspect(registry);
     }
     
 }
